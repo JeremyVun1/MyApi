@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.HttpOverrides;
+using MyApi.Handlers;
 using MyApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,7 +7,8 @@ builder.Host.UseSystemd();
 
 var services = builder.Services;
 
-services.AddSingleton<ICounterService, CounterService>();
+services.AddScoped<ICounterService, CounterService>()
+    .AddScoped<IDatabaseHandler, DatabaseHandler>();
 
 services.AddControllers();
 
@@ -20,10 +22,10 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions{
 });
 
 
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 }

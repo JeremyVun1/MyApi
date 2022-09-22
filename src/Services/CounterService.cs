@@ -1,30 +1,48 @@
+using MyApi.Handlers;
+using MyApi.Models;
+
 namespace MyApi.Services;
 
 public interface ICounterService
 {
-    public Task ChangeCount(int value);
-    public Task<int> GetCount();
+    Task ChangeCount(Counter counter);
+    Task<Counter> GetCounter(int counterId = 1);
+    Task<List<Counter>> GetCounters();
+    Task DeleteCounter(int counterId);
+    Task CreateCounter();
 }
 
 public class CounterService : ICounterService
 {
-    private int _count = 0;
+    private readonly IDatabaseHandler _dbHandler;
 
-    private readonly ILogger<ICounterService> _logger;
-
-    public CounterService(ILogger<ICounterService> logger)
+    public CounterService(IDatabaseHandler dbHandler)
     {
-        _logger = logger;
+        _dbHandler = dbHandler;
     }
 
-    public async Task ChangeCount(int value)
+    public async Task ChangeCount(Counter counter)
     {
-        _logger.LogInformation($"Changed Counter by {value}");
-        _count += value;
+        await _dbHandler.ChangeCounter(counter.Value, counter.Id);
     }
 
-    public async Task<int> GetCount()
+    public async Task<List<Counter>> GetCounters()
     {
-        return _count;
+        return await _dbHandler.GetCounters();
+    }
+
+    public async Task<Counter> GetCounter(int counterId = 1)
+    {
+        return await _dbHandler.GetCounter(counterId);
+    }
+
+    public async Task DeleteCounter(int counterId)
+    {
+        await _dbHandler.DeleteCounter(counterId);
+    }
+
+    public async Task CreateCounter()
+    {
+        await _dbHandler.CreateCounter();
     }
 }
