@@ -1,0 +1,17 @@
+[Unit]
+Description=My test api
+
+[Service]
+ExecStart=dotnet /var/www/myapi/myapi.dll --urls=http://localhost:5001
+Restart=always
+# Restart service after 10 seconds if the dotnet service crashes:
+TimeoutStopSec=90
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=myapi
+User=root
+Environment=ASPNETCORE_ENVIRONMENT=Development
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+[Install]
+WantedBy=multi-user.target
